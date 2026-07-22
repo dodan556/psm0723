@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
+import Modal from "../../components/ui/Modal";
 import {
   getProjects,
   deleteProject,
 } from "../../services/project.service";
+
 import type { Project } from "../../types/project";
+
 import ProjectForm from "../../components/admin/ProjectForm";
+import AdminHeader from "../../components/admin/ui/AdminHeader";
+import StatusBadge from "../../components/admin/ui/StatusBadge";
+import Button from "../../components/ui/Button";
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUploader, setShowUploader] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("전체");
 
   async function loadProjects() {
   try {
@@ -42,30 +50,72 @@ async function handleDelete(id: string) {
 useEffect(() => {
   loadProjects();
 }, []);
+const categories = [
+  "전체",
+  ...new Set(projects.map((project) => project.category)),
+];
+const filteredProjects = projects.filter((project) => {
+  const keyword = search.toLowerCase();
 
+  const matchesSearch =
+    project.title.toLowerCase().includes(keyword) ||
+    project.category.toLowerCase().includes(keyword);
+
+  const matchesCategory =
+    categoryFilter === "전체" ||
+    project.category === categoryFilter;
+
+  return matchesSearch && matchesCategory;
+});
   if (loading) {
     return <p>불러오는 중...</p>;
   }
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Projects</h1>
+      <AdminHeader
+  title="Projects"
+  description="포트폴리오 프로젝트를 관리합니다."
+  count={projects.length}
+  buttonText="+ 새 프로젝트"
+  onButtonClick={() => {
+    setSelectedProject(undefined);
+    setShowUploader(true);
+  }}
+/>
+<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  <div className="flex flex-1 gap-3">
+    <input
+      type="text"
+      placeholder="프로젝트 검색..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full rounded-xl border border-zinc-300 px-4 py-2 outline-none transition focus:border-black"
+    />
 
-        <button
-  onClick={() => {
-  setSelectedProject(undefined);
-  setShowUploader(true);
-}}
-  className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
->
-  + 새 프로젝트
-        </button> 
-      </div>
+    <select
+      value={categoryFilter}
+      onChange={(e) => setCategoryFilter(e.target.value)}
+      className="rounded-xl border border-zinc-300 px-4 py-2 outline-none transition focus:border-black"
+    >
+      {categories.map((category) => (
+        <option
+          key={category}
+          value={category}
+        >
+          {category}
+        </option>
+      ))}
+    </select>
+  </div>
 
-      <div className="overflow-hidden rounded-xl border bg-white">
+  <span className="text-sm text-zinc-500">
+    총 {filteredProjects.length}개
+  </span>
+</div>
+      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
         <table className="w-full">
-          <thead className="bg-gray-100">
+          <thead className="bg-zinc-50">
             <tr>
               <th className="p-4 text-left">썸네일</th>
               <th className="p-4 text-left">제목</th>
@@ -76,26 +126,26 @@ useEffect(() => {
           </thead>
 
           <tbody>
-            {projects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <tr>
                 <td
                   colSpan={5}
                   className="p-6 text-center text-gray-500"
                 >
-                  등록된 프로젝트가 없습니다.
+                  검색 결과가 없습니다.
                 </td>
               </tr>
             ) : (
-              projects.map((project) => (
+              filteredProjects.map((project) => (
   <tr
     key={project.id}
-    className="border-t hover:bg-gray-50"
+    className="border-b border-zinc-200 transition-colors hover:bg-zinc-50"
   >
     <td className="p-4">
       <img
         src={project.thumbnail || ""}
         alt={project.title}
-        className="h-16 w-16 rounded border object-cover"
+        className="h-20 w-20 rounded-xl border border-zinc-200 object-cover shadow-sm"
       />
     </td>
 
@@ -108,27 +158,26 @@ useEffect(() => {
     </td>
 
     <td className="p-4">
-      {project.published ? "공개" : "비공개"}
-    </td>
+  <StatusBadge published={project.published} />
+</td>
 
     <td className="p-4">
       <div className="flex justify-center gap-2">
-        <button
+       <Button
   onClick={() => {
     setSelectedProject(project);
     setShowUploader(true);
   }}
-  className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600"
 >
   수정
-</button>
+</Button>
 
-        <button
+        <Button
+  variant="secondary"
   onClick={() => handleDelete(project.id)}
-  className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700"
 >
   삭제
-</button>
+</Button>
       </div>
     </td>
   </tr>
@@ -137,19 +186,24 @@ useEffect(() => {
           </tbody>
         </table>
       </div>
-      {showUploader && (
-  <div className="mt-8">
-    <ProjectForm
-  mode={selectedProject ? "edit" : "create"}
-  project={selectedProject}
-  onSaved={async () => {
-    setShowUploader(false);
-    setSelectedProject(undefined);
-    await loadProjects();
-  }}
-/>
-  </div>
-)}
+            <Modal
+        open={showUploader}
+        title={selectedProject ? "프로젝트 수정" : "새 프로젝트"}
+        onClose={() => {
+          setShowUploader(false);
+          setSelectedProject(undefined);
+        }}
+      >
+        <ProjectForm
+          mode={selectedProject ? "edit" : "create"}
+          project={selectedProject}
+          onSaved={async () => {
+            setShowUploader(false);
+            setSelectedProject(undefined);
+            await loadProjects();
+          }}
+        />
+      </Modal>
     </div>
   );
 }

@@ -6,6 +6,11 @@ interface ButtonProps {
   to?: string;
   variant?: "primary" | "secondary" | "ghost";
   className?: string;
+
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  type?: "button" | "submit" | "reset";
+
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -14,9 +19,12 @@ export default function Button({
   to,
   variant = "primary",
   className = "",
+  onClick,
+  type = "button",
+  disabled = false,
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-semibold transition-all duration-300";
+  "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-semibold transition-all duration-300 disabled:pointer-events-none";
 
   const styles = {
     primary:
@@ -54,8 +62,15 @@ export default function Button({
   }
 
   return (
-    <button className={`${base} ${styles[variant]} ${className}`}>
-      {children}
-    </button>
+    <button
+  type={type}
+  onClick={onClick}
+  disabled={disabled}
+  className={`${base} ${styles[variant]} ${
+    disabled ? "cursor-not-allowed opacity-50" : ""
+  } ${className}`}
+>
+  {children}
+</button>
   );
 }

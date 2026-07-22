@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import type { Project } from "../../types/project";
 import ImageUploader from "./ImageUploader";
 import ProjectImagesUploader from "./ProjectImagesUploader";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import Textarea from "../ui/Textarea";
 
 interface ProjectFormProps {
   onSaved: () => void;
@@ -115,18 +118,14 @@ setSortOrder(0);
 };
 
   return (
-    <div className="space-y-6 rounded-xl border bg-white p-6">
+    <div className="space-y-6">
 
       <div>
-        <label className="mb-2 block font-semibold">
-          프로젝트 제목
-        </label>
-
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded border p-3"
-        />
+        <Input
+  label="프로젝트 제목"
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/>
       </div>
       <div>
   <label className="mb-2 block font-semibold">
@@ -152,23 +151,20 @@ setSortOrder(0);
           카테고리
         </label>
 
-        <input
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full rounded border p-3"
-        />
+        <Input
+  label="카테고리"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+/>
       </div>
 
       <div>
-        <label className="mb-2 block font-semibold">
-          설명
-        </label>
-
-        <textarea
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          className="h-32 w-full rounded border p-3"
-        />
+        <Textarea
+  label="설명"
+  value={summary}
+  onChange={(e) => setSummary(e.target.value)}
+  className="h-32"
+/>
       </div>
 
       <div>
@@ -189,15 +185,12 @@ setSortOrder(0);
         )}
       </div>
       <div>
-  <label className="mb-2 block font-semibold">
-    본문
-  </label>
-
-  <textarea
-    value={content}
-    onChange={(e) => setContent(e.target.value)}
-    className="h-48 w-full rounded border p-3"
-  />
+  <Textarea
+  label="본문"
+  value={content}
+  onChange={(e) => setContent(e.target.value)}
+  className="h-48"
+/>
 </div>
 {mode === "edit" && project && (
   <ProjectImagesUploader projectId={project.id} />
@@ -207,24 +200,24 @@ setSortOrder(0);
     GitHub
   </label>
 
-  <input
-    value={github}
-    onChange={(e) => setGithub(e.target.value)}
-    className="w-full rounded border p-3"
-    placeholder="https://github.com/..."
-  />
+  <Input
+  label="GitHub"
+  value={github}
+  onChange={(e) => setGithub(e.target.value)}
+  placeholder="https://github.com/..."
+/>
 </div>
 <div>
   <label className="mb-2 block font-semibold">
     Live URL
   </label>
 
-  <input
-    value={liveUrl}
-    onChange={(e) => setLiveUrl(e.target.value)}
-    className="w-full rounded border p-3"
-    placeholder="https://..."
-  />
+  <Input
+  label="Live URL"
+  value={liveUrl}
+  onChange={(e) => setLiveUrl(e.target.value)}
+  placeholder="https://..."
+/>
 </div>
 <div>
   <label className="mb-2 block font-semibold">
@@ -273,12 +266,9 @@ setSortOrder(0);
   />
 </div>
 
-      <button
-  onClick={handleSave}
-  className="rounded bg-blue-600 px-6 py-3 text-white"
-      >
-        저장
-      </button>
+      <Button onClick={handleSave}>
+  저장
+</Button>
 
     </div>
   );
