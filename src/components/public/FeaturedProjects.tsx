@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import { getProjects } from "../../services/project.service";
 import type { Project } from "../../types/project";
