@@ -114,10 +114,14 @@ export default function AdminAbout() {
         description="대표 이미지를 변경합니다."
       >
         <ImageUploader
-          onUploadComplete={(url) =>
-            updateField("profile_image", url)
-          }
-        />
+  folder="settings"
+  onUploadComplete={(url) =>
+    setForm({
+      ...form,
+      profile_image: url,
+    })
+  }
+/>
 
         {form.profile_image && (
           <img
