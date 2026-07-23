@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { uploadProjectImage } from "../../services/storage.service";
+import { uploadMedia } from "../../services/storage.service";
 
 interface Props {
+  folder: "thumbnails" | "details" | "videos" | "settings";
   onUploadComplete: (url: string) => void;
 }
 
-export default function ImageUploader({ onUploadComplete }: Props) {
+export default function ImageUploader({
+  folder,
+  onUploadComplete,
+}: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [isVideo, setIsVideo] = useState(false);
@@ -31,7 +35,7 @@ setIsVideo(selected.type.startsWith("video/"));
     try {
       setUploading(true);
 
-      const url = await uploadProjectImage(file);
+      const url = await uploadMedia(file, folder);
 
       onUploadComplete(url);
 

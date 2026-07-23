@@ -1,3 +1,4 @@
+import NotFound from "../pages/NotFound";
 import { createBrowserRouter } from "react-router-dom";
 
 import PublicLayout from "../layouts/PublicLayout";
@@ -89,5 +90,9 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+   {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

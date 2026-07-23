@@ -1,3 +1,4 @@
+import SEO from "../components/common/SEO";
 import { Outlet } from "react-router-dom";
 
 import Header from "../components/public/Header";
@@ -5,6 +6,9 @@ import Footer from "../components/public/Footer";
 
 export default function PublicLayout() {
   return (
+  <>
+    <SEO />
+
     <div className="min-h-screen bg-white text-gray-900">
       <Header />
 
@@ -14,5 +18,6 @@ export default function PublicLayout() {
 
       <Footer />
     </div>
-  );
+  </>
+);
 }

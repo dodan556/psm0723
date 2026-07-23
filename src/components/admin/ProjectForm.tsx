@@ -173,10 +173,11 @@ setSortOrder(0);
         </label>
 
         <ImageUploader
-          onUploadComplete={(url) => {
-            setThumbnail(url);
-          }}
-        />
+  folder="thumbnails"
+  onUploadComplete={(url) => {
+    setThumbnail(url);
+  }}
+/>
 
         {thumbnail && (
           <p className="mt-2 text-sm text-green-600">

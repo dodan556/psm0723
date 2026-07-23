@@ -100,3 +100,29 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 
   return data as Project;
 }
+
+export async function getProjectsStats() {
+  const projects = await getProjects();
+
+  return {
+    total: projects.length,
+
+    featured: projects.filter((p) => p.featured).length,
+
+    published: projects.filter((p) => p.published).length,
+
+    categories: new Set(
+  projects
+    .map((p) => p.project_type)
+    .filter(Boolean)
+).size,
+
+    latest: [...projects]
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() -
+          new Date(a.created_at).getTime()
+      )
+      .slice(0, 5),
+  };
+}

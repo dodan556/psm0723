@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { getProjectBySlug } from "../services/project.service";
+import {
+  getProjectBySlug,
+  getProjects,
+} from "../services/project.service";
+
 import {
   getProjectMedia,
   type ProjectMedia,
@@ -11,12 +15,14 @@ import type { Project } from "../types/project";
 export function useProjectDetail(slug?: string) {
   const [project, setProject] = useState<Project | null>(null);
   const [media, setMedia] = useState<ProjectMedia[]>([]);
+  const [relatedProjects, setRelatedProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!slug) {
       setProject(null);
       setMedia([]);
+      setRelatedProjects([]);
       setLoading(false);
       return;
     }
@@ -34,15 +40,29 @@ export function useProjectDetail(slug?: string) {
         if (!projectData) {
           setProject(null);
           setMedia([]);
+          setRelatedProjects([]);
           return;
         }
 
-        const mediaData = await getProjectMedia(projectData.id);
+        const [mediaData, allProjects] = await Promise.all([
+          getProjectMedia(projectData.id),
+          getProjects(),
+        ]);
 
         if (!isMounted) return;
 
+        const related = allProjects
+          .filter(
+            (item) =>
+              item.published &&
+              item.id !== projectData.id &&
+              item.project_type === projectData.project_type
+          )
+          .slice(0, 3);
+
         setProject(projectData);
         setMedia(mediaData);
+        setRelatedProjects(related);
       } catch (error) {
         console.error(error);
 
@@ -50,6 +70,7 @@ export function useProjectDetail(slug?: string) {
 
         setProject(null);
         setMedia([]);
+        setRelatedProjects([]);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -67,6 +88,7 @@ export function useProjectDetail(slug?: string) {
   return {
     project,
     media,
+    relatedProjects,
     loading,
   };
 }

@@ -14,7 +14,7 @@ const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 
 export async function uploadMedia(
   file: File,
-  folder: "thumbnails" | "details" | "videos"
+  folder: "thumbnails" | "details" | "videos" | "settings"
 ) {
   if (!ALLOWED_TYPES.includes(file.type)) {
     throw new Error("지원하지 않는 파일 형식입니다.");

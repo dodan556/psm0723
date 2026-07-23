@@ -7,47 +7,66 @@ export default function Sidebar() {
     window.location.href = "/admin/login";
   }
 
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `block rounded px-4 py-3 transition ${
+      isActive
+        ? "bg-slate-700 text-white"
+        : "hover:bg-slate-800 text-slate-300"
+    }`;
+
   return (
-    <aside className="w-64 bg-slate-900 text-white min-h-screen p-6">
-      <h1 className="text-2xl font-bold mb-10">
+    <aside className="min-h-screen w-64 bg-slate-900 p-6 text-white">
+      <h1 className="mb-10 text-2xl font-bold">
         Portfolio CMS
       </h1>
 
       <nav className="space-y-2">
-
         <NavLink
           to="/admin/dashboard"
-          className="block rounded px-4 py-3 hover:bg-slate-700"
+          className={linkClass}
         >
-          Dashboard
+          📊 Dashboard
         </NavLink>
 
         <NavLink
           to="/admin/projects"
-          className="block rounded px-4 py-3 hover:bg-slate-700"
+          className={linkClass}
         >
-          Projects
+          📁 Projects
         </NavLink>
 
         <NavLink
-          to="/admin/categories"
-          className="block rounded px-4 py-3 hover:bg-slate-700"
+          to="/admin/home"
+          className={linkClass}
         >
-          Categories
+          🏠 Home
+        </NavLink>
+
+        <NavLink
+          to="/admin/about"
+          className={linkClass}
+        >
+          👤 About
         </NavLink>
 
         <NavLink
           to="/admin/contact"
-          className="block rounded px-4 py-3 hover:bg-slate-700"
+          className={linkClass}
         >
-          Contact
+          ✉ Contact
         </NavLink>
 
+        <NavLink
+          to="/admin/settings"
+          className={linkClass}
+        >
+          ⚙ Settings
+        </NavLink>
       </nav>
 
       <button
         onClick={handleLogout}
-        className="mt-12 w-full rounded bg-red-600 py-3"
+        className="mt-12 w-full rounded-lg bg-red-600 py-3 transition hover:bg-red-700"
       >
         Logout
       </button>
